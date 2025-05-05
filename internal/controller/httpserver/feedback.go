@@ -6,14 +6,17 @@ import (
 )
 
 type FeedbackHandler struct {
+	usecase usecase.UseCase
 }
 
 type errorResponse struct {
 	Error string `json:"erros"`
 }
 
-func NewFeedbackHandler() *FeedbackHandler {
-	return &FeedbackHandler{}
+func NewFeedbackHandler(usecase usecase.UseCase) *FeedbackHandler {
+	return &FeedbackHandler{
+		usecase: usecase,
+	}
 }
 
 func (h *FeedbackHandler) SubmitPing(c *gin.Context) {
@@ -22,10 +25,9 @@ func (h *FeedbackHandler) SubmitPing(c *gin.Context) {
 
 func (h *FeedbackHandler) GetTokens(c *gin.Context) {
 	guid := c.Query("guid")
-	accessToken, err := usecase.GetTokens(guid)
+	tokens, err := h.usecase.GetTokens(guid)
 	if err != nil {
 		return
 	}
-	refreshToken, err :=
-		c.String(200, token)
+	c.JSON(200, tokens)
 }

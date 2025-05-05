@@ -42,11 +42,11 @@ func GenerateJWT(guid string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func (t *Tokens) GetHashedRefresh() string {
+func (t *Tokens) GetHashedRefresh() (string, error) {
 	hashedToken, err := bcrypt.GenerateFromPassword([]byte(t.refreshToken), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error().Err(err)
-		return ""
+		return "", err
 	}
-	return string(hashedToken)
+	return string(hashedToken), nil
 }

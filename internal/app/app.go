@@ -8,11 +8,14 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/paxaf/medodsTestEx/config"
 	"github.com/paxaf/medodsTestEx/internal/controller/httpserver"
+	"github.com/paxaf/medodsTestEx/internal/repository"
+	"github.com/paxaf/medodsTestEx/internal/usecase"
 )
 
 type App struct {
@@ -24,12 +27,14 @@ func New(cfg *config.Config) (*App, error) {
 	app := &App{}
 	app.config = cfg
 
-	/* pool, err := pgxpool.New(context.Background(), cfg.Database.GetDSN())
+	pool, err := pgxpool.New(context.Background(), cfg.Database.GetDSN())
 	if err != nil {
 		log.Error().Err(err)
 	}
-	*/
-	handler := httpserver.NewFeedbackHandler()
+	repo := repository.NewRepository(pool)
+
+	usecase := usecase.NewUseCase(repo)
+	handler := httpserver.NewFeedbackHandler(usecase)
 	router := gin.Default()
 	router.GET("/ping", handler.SubmitPing)
 	router.GET("/tokens", handler.GetTokens)
