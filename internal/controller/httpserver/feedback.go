@@ -1,6 +1,9 @@
 package httpserver
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/paxaf/medodsTestEx/internal/usecase"
 )
@@ -27,7 +30,9 @@ func (h *FeedbackHandler) GetTokens(c *gin.Context) {
 	guid := c.Query("guid")
 	tokens, err := h.usecase.GetTokens(guid)
 	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{Error: "bad request"})
 		return
 	}
+	log.Println(tokens)
 	c.JSON(200, tokens)
 }

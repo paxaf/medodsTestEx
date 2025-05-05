@@ -13,7 +13,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err, "failed to load cfg")
 	}
-
 	app, err := app.New(cfg)
 	if err != nil {
 		log.Fatal(err, "error creating app")

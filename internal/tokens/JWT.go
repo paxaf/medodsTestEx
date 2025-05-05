@@ -9,8 +9,8 @@ import (
 var jwtSecret = []byte("secret")
 
 type Tokens struct {
-	accessToken  string
-	refreshToken string
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 type Claims struct {
@@ -28,8 +28,8 @@ func NewTokens(guid string) *Tokens {
 		return nil
 	}
 	return &Tokens{
-		accessToken:  access,
-		refreshToken: refresh,
+		AccessToken:  access,
+		RefreshToken: refresh,
 	}
 }
 
@@ -43,7 +43,7 @@ func GenerateJWT(guid string) (string, error) {
 }
 
 func (t *Tokens) GetHashedRefresh() (string, error) {
-	hashedToken, err := bcrypt.GenerateFromPassword([]byte(t.refreshToken), bcrypt.DefaultCost)
+	hashedToken, err := bcrypt.GenerateFromPassword([]byte(t.RefreshToken), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error().Err(err)
 		return "", err
