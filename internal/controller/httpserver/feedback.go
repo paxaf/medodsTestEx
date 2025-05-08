@@ -32,12 +32,6 @@ func (h *FeedbackHandler) GetTokens(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-	log.Println(tokens)
-	c.SetCookie(
-		"refresh_token",
-		tokens.RefreshToken,
-		60*60*24*7,
-	)
 	c.JSON(200, tokens)
 }
 
