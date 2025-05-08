@@ -38,6 +38,8 @@ func New(cfg *config.Config) (*App, error) {
 	router := gin.Default()
 	router.GET("/ping", handler.SubmitPing)
 	router.GET("/tokens", handler.GetTokens)
+	router.GET("/guid", handler.Guid)
+	router.POST("/refresh", handler.Refresh)
 	host := app.config.APIServer.Host
 	port := app.config.APIServer.Port
 	addr := net.JoinHostPort(host, port)

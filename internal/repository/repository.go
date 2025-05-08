@@ -7,6 +7,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+var (
+	ErrFeedbackExists = errors.New("feedback already exists")
+	ErrPostgreSQL     = errors.New("PostgreSQL error")
+)
+
 const (
 	querySetHash string = `INSERT INTO users (guid, refreshToken) VALUES ($1, $2)`
 )
@@ -23,11 +28,6 @@ type Repository struct {
 func NewRepository(pool *pgxpool.Pool) PgRepository {
 	return &Repository{pool: pool}
 }
-
-var (
-	ErrFeedbackExists = errors.New("feedback already exists")
-	ErrPostgreSQL     = errors.New("PostgreSQL error")
-)
 
 func (r *Repository) Close() {
 	r.pool.Close()
