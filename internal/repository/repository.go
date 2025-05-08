@@ -8,14 +8,19 @@ import (
 )
 
 const (
-	querySetHash = `INSERT INTO users (guid, refreshToken) VALUES ($1, $2)`
+	querySetHash string = `INSERT INTO users (guid, refreshToken) VALUES ($1, $2)`
 )
+
+type PgRepository interface {
+	Close()
+	SetHash(guid, hashToken string) error
+}
 
 type Repository struct {
 	pool *pgxpool.Pool
 }
 
-func NewRepository(pool *pgxpool.Pool) *Repository {
+func NewRepository(pool *pgxpool.Pool) PgRepository {
 	return &Repository{pool: pool}
 }
 

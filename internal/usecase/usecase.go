@@ -6,16 +6,20 @@ import (
 	"github.com/paxaf/medodsTestEx/internal/tokens"
 )
 
-type UseCase struct {
-	repo *repository.Repository
+type UseCase interface {
+	GetTokens(guid string) (*tokens.Tokens, error)
 }
 
-func NewUseCase(repo *repository.Repository) UseCase {
-	return UseCase{
+type usecase struct {
+	repo repository.PgRepository
+}
+
+func NewUseCase(repo repository.PgRepository) UseCase {
+	return &usecase{
 		repo: repo,
 	}
 }
-func (u *UseCase) GetTokens(guid string) (*tokens.Tokens, error) {
+func (u *usecase) GetTokens(guid string) (*tokens.Tokens, error) {
 	err := uuid.Validate(guid)
 	if err != nil {
 		return nil, err
