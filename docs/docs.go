@@ -15,61 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/deauth": {
-            "get": {
-                "description": "Деавторизует пользователя по его GUID (инвалидирует токены)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Деавторизация пользователя",
-                "parameters": [
-                    {
-                        "description": "Токены для деавторизации",
-                        "name": "tokens",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/tokens.Tokens"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешная деавторизация",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Ошибка запроса",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Невалидные токены",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/guid": {
             "get": {
                 "description": "Проверяет валидность токенов и возвращает GUID пользователя",
@@ -98,28 +43,65 @@ const docTemplate = `{
                     "200": {
                         "description": "GUID пользователя",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     },
                     "400": {
                         "description": "Ошибка запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Невалидные токены",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "get": {
+                "description": "Деавторизует пользователя по его GUID (инвалидирует токены)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Деавторизация пользователя",
+                "parameters": [
+                    {
+                        "description": "Токены для деавторизации",
+                        "name": "tokens",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/tokens.Tokens"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешная деавторизация",
+                        "schema": {
+                            "$ref": "#/definitions/httpserver.errorResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка запроса",
+                        "schema": {
+                            "$ref": "#/definitions/httpserver.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Невалидные токены",
+                        "schema": {
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     }
                 }
@@ -159,28 +141,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Ошибка запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     },
                     "401": {
                         "description": "Невалидные токены",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     }
                 }
@@ -218,19 +191,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Ошибка запроса",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     },
                     "500": {
                         "description": "Внутренняя ошибка сервера",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
+                            "$ref": "#/definitions/httpserver.errorResponse"
                         }
                     }
                 }
@@ -238,6 +205,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "httpserver.errorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
         "tokens.Tokens": {
             "type": "object",
             "properties": {

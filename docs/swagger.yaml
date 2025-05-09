@@ -1,4 +1,9 @@
 definitions:
+  httpserver.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
   tokens.Tokens:
     properties:
       access_token:
@@ -9,42 +14,6 @@ definitions:
 info:
   contact: {}
 paths:
-  /deauth:
-    get:
-      consumes:
-      - application/json
-      description: Деавторизует пользователя по его GUID (инвалидирует токены)
-      parameters:
-      - description: Токены для деавторизации
-        in: body
-        name: tokens
-        required: true
-        schema:
-          $ref: '#/definitions/tokens.Tokens'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Успешная деавторизация
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Ошибка запроса
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "401":
-          description: Невалидные токены
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Деавторизация пользователя
-      tags:
-      - auth
   /guid:
     get:
       consumes:
@@ -63,22 +32,46 @@ paths:
         "200":
           description: GUID пользователя
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
         "400":
           description: Ошибка запроса
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
         "401":
           description: Невалидные токены
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
       summary: Валидация токенов и получение GUID
+      tags:
+      - auth
+  /logout:
+    get:
+      consumes:
+      - application/json
+      description: Деавторизует пользователя по его GUID (инвалидирует токены)
+      parameters:
+      - description: Токены для деавторизации
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.Tokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная деавторизация
+          schema:
+            $ref: '#/definitions/httpserver.errorResponse'
+        "400":
+          description: Ошибка запроса
+          schema:
+            $ref: '#/definitions/httpserver.errorResponse'
+        "401":
+          description: Невалидные токены
+          schema:
+            $ref: '#/definitions/httpserver.errorResponse'
+      summary: Деавторизация пользователя
       tags:
       - auth
   /refresh:
@@ -103,21 +96,15 @@ paths:
         "400":
           description: Ошибка запроса
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
         "401":
           description: Невалидные токены
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
       summary: Обновление токенов
       tags:
       - auth
@@ -142,15 +129,11 @@ paths:
         "400":
           description: Ошибка запроса
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
         "500":
           description: Внутренняя ошибка сервера
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/httpserver.errorResponse'
       summary: Получение токенов
       tags:
       - auth
