@@ -1,16 +1,16 @@
 package tokens
 
 import (
+	"fmt"
+
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/rs/zerolog/log"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var jwtSecret = []byte("secret")
 
 type Tokens struct {
 	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh_token,omitempty"`
 }
 
 type Claims struct {
@@ -23,7 +23,7 @@ func NewTokens(guid string) *Tokens {
 	if err != nil {
 		return nil
 	}
-	refresh, err := GenerateRefresh(guid)
+	refresh, err := GenerateRefresh()
 	if err != nil {
 		return nil
 	}
@@ -42,11 +42,22 @@ func GenerateJWT(guid string) (string, error) {
 	return token.SignedString(jwtSecret)
 }
 
-func (t *Tokens) GetHashedRefresh() (string, error) {
-	hashedToken, err := bcrypt.GenerateFromPassword([]byte(t.RefreshToken), bcrypt.DefaultCost)
+func (t *Tokens) ValidateJWT() (string, error) {
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(t.AccessToken, claims, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return jwtSecret, nil
+	})
+
 	if err != nil {
-		log.Error().Err(err)
 		return "", err
 	}
-	return string(hashedToken), nil
+	if !token.Valid {
+		return "", fmt.Errorf("invalid token")
+	}
+
+	return claims.UserGUID, nil
 }

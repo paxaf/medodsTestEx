@@ -40,6 +40,7 @@ func New(cfg *config.Config) (*App, error) {
 	router.GET("/tokens", handler.GetTokens)
 	router.GET("/guid", handler.Guid)
 	router.POST("/refresh", handler.Refresh)
+	router.GET("/logout", handler.Deauthorized)
 	host := app.config.APIServer.Host
 	port := app.config.APIServer.Port
 	addr := net.JoinHostPort(host, port)

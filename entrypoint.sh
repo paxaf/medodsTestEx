@@ -4,4 +4,4 @@ export DB_DSN="postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@postgres:5432/${
 
 goose -dir ./migrations postgres "$DB_DSN" up
 
-./chain_service
+./my_app
