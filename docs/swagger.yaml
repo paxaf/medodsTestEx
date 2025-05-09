@@ -1,0 +1,157 @@
+definitions:
+  tokens.Tokens:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /deauth:
+    get:
+      consumes:
+      - application/json
+      description: Деавторизует пользователя по его GUID (инвалидирует токены)
+      parameters:
+      - description: Токены для деавторизации
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.Tokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешная деавторизация
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Невалидные токены
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Деавторизация пользователя
+      tags:
+      - auth
+  /guid:
+    get:
+      consumes:
+      - application/json
+      description: Проверяет валидность токенов и возвращает GUID пользователя
+      parameters:
+      - description: Токены для валидации
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.Tokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: GUID пользователя
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Ошибка запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Невалидные токены
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Валидация токенов и получение GUID
+      tags:
+      - auth
+  /refresh:
+    post:
+      consumes:
+      - application/json
+      description: Обновляет JWT и refresh-токен, если текущие валидны
+      parameters:
+      - description: Текущие токены
+        in: body
+        name: tokens
+        required: true
+        schema:
+          $ref: '#/definitions/tokens.Tokens'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Новые токены
+          schema:
+            $ref: '#/definitions/tokens.Tokens'
+        "400":
+          description: Ошибка запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Невалидные токены
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Обновление токенов
+      tags:
+      - auth
+  /tokens:
+    get:
+      consumes:
+      - application/json
+      description: Генерирует и возвращает JWT и refresh-токен для указанного GUID
+      parameters:
+      - description: Уникальный идентификатор пользователя
+        in: query
+        name: guid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/tokens.Tokens'
+        "400":
+          description: Ошибка запроса
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Получение токенов
+      tags:
+      - auth
+swagger: "2.0"

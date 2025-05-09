@@ -30,6 +30,16 @@ func (h *FeedbackHandler) SubmitPing(c *gin.Context) {
 	c.String(200, "pong")
 }
 
+// @Summary Получение токенов
+// @Description Генерирует и возвращает JWT и refresh-токен для указанного GUID
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param guid query string true "Уникальный идентификатор пользователя"
+// @Success 200 {object} tokens.Tokens
+// @Failure 400 {object} map[string]string "Ошибка запроса"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Router /tokens [get]
 func (h *FeedbackHandler) GetTokens(c *gin.Context) {
 	ua := c.GetHeader("User-Agent")
 	hashUa := hashUserAgent(ua)
@@ -42,6 +52,16 @@ func (h *FeedbackHandler) GetTokens(c *gin.Context) {
 	c.JSON(200, tokens)
 }
 
+// @Summary Валидация токенов и получение GUID
+// @Description Проверяет валидность токенов и возвращает GUID пользователя
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param tokens body tokens.Tokens true "Токены для валидации"
+// @Success 200 {object} map[string]string "GUID пользователя"
+// @Failure 400 {object} map[string]string "Ошибка запроса"
+// @Failure 401 {object} map[string]string "Невалидные токены"
+// @Router /guid [get]
 func (h *FeedbackHandler) Guid(c *gin.Context) {
 	var req tokens.Tokens
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -57,6 +77,17 @@ func (h *FeedbackHandler) Guid(c *gin.Context) {
 	c.JSON(200, map[string]string{"guid": guid})
 }
 
+// @Summary Обновление токенов
+// @Description Обновляет JWT и refresh-токен, если текущие валидны
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param tokens body tokens.Tokens true "Текущие токены"
+// @Success 200 {object} tokens.Tokens "Новые токены"
+// @Failure 400 {object} map[string]string "Ошибка запроса"
+// @Failure 401 {object} map[string]string "Невалидные токены"
+// @Failure 500 {object} map[string]string "Внутренняя ошибка сервера"
+// @Router /refresh [post]
 func (h *FeedbackHandler) Refresh(c *gin.Context) {
 	var req tokens.Tokens
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -83,6 +114,16 @@ func (h *FeedbackHandler) Refresh(c *gin.Context) {
 	c.JSON(200, token)
 }
 
+// @Summary Деавторизация пользователя
+// @Description Деавторизует пользователя по его GUID (инвалидирует токены)
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param tokens body tokens.Tokens true "Токены для деавторизации"
+// @Success 200 {object} map[string]string "Успешная деавторизация"
+// @Failure 400 {object} map[string]string "Ошибка запроса"
+// @Failure 401 {object} map[string]string "Невалидные токены"
+// @Router /deauth [get]
 func (h *FeedbackHandler) Deauthorized(c *gin.Context) {
 	var req tokens.Tokens
 	if err := c.ShouldBindJSON(&req); err != nil {

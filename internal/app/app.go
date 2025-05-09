@@ -10,9 +10,12 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/zerolog/log"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"github.com/gin-gonic/gin"
 	"github.com/paxaf/medodsTestEx/config"
+	_ "github.com/paxaf/medodsTestEx/docs"
 	"github.com/paxaf/medodsTestEx/internal/controller/httpserver"
 	"github.com/paxaf/medodsTestEx/internal/repository"
 	"github.com/paxaf/medodsTestEx/internal/usecase"
@@ -36,6 +39,7 @@ func New(cfg *config.Config) (*App, error) {
 	usecase := usecase.NewUseCase(repo)
 	handler := httpserver.NewFeedbackHandler(usecase)
 	router := gin.Default()
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.GET("/ping", handler.SubmitPing)
 	router.GET("/tokens", handler.GetTokens)
 	router.GET("/guid", handler.Guid)
